@@ -1,0 +1,82 @@
+﻿@model IEnumerable<AlbumsMVC.Models.Genre>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2 style="visibility:hidden">Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+</p>
+<h5 style="visibility:hidden">Index</h5>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.GenreId }) |
+                <a style="cursor:pointer;" onclick="dialog.data('id',@item.GenreId).dialog('open')">Delete</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<div id="dialog-confirm" title="Delete this item?">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This item will be permanently deleted from the Store. Are you sure?</p>
+</div>
+@section scripts{
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap.min.css" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/black-tie/jquery-ui.css" />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap.min.js"></script>
+    @*<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>*@
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+    <script>
+        $(document).on("ready", function () {
+            //var table = $("#booksTable").DataTable();
+            new DataTable('#booksTable');
+            dialog = $("#dialog-confirm").dialog({
+                autoOpen:false,
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                buttons: {
+                    "Delete": function () {
+                        $.ajax({
+                            url: "/Genres/Delete/" + $(this).data('id'),
+                            type: 'GET',
+                            success: function () {
+                                setTimeout(function () {
+                                    window.location.reload(1);
+                                }, 10);
+                            }
+                            
+                        });
+
+                        $(this).dialog("close");
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+
+        });
+
+    </script>
+}

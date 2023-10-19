@@ -1,0 +1,268 @@
+﻿@model IEnumerable<AlbumsMVC.Models.Book>
+@{
+    ViewBag.Title = "BooksStore";
+}
+<style>
+    h3 {
+        text-align: center;
+        font-size: 30px;
+        margin: 0;
+        padding-top: 10px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .gallery {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        margin: 50px 0;
+    }
+
+    .content {
+        width: 20%;
+        margin: 15px;
+        box-sizing: border-box;
+        float: left;
+        text-align: center;
+        border-radius: 20px;
+        cursor: pointer;
+        padding-top: 10px;
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        transition: 0.4s;
+        background: #f2f2f2;
+    }
+
+        .content:hover {
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+            transform: translate(0px,-8px);
+        }
+
+            .content:hover p {
+                color: #222f3e;
+            }
+
+    img {
+        width: 200px;
+        height: 200px;
+        text-align: center;
+        margin: 0 auto;
+        display: block;
+        max-width:100%;
+        border-radius:10px;
+    }
+
+    p {
+        transition: 0.4s;
+        text-align: center;
+        color: #b2bec3;
+        padding-top: 0 8px;
+    }
+
+    h6 {
+        font-size: 26px;
+        text-align: center;
+        color: #222f3e;
+        margin: 0;
+    }
+
+    button {
+        text-align: center;
+        font-size: 24px;
+        color: #fff !important;
+        width: 100%;
+        padding: 15px;
+        border: 0;
+        outline: none;
+        cursor: pointer;
+        margin-top: 5px;
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+        background: #2183a3;
+    }
+
+        button a {
+            color: #fff !important;
+            text-decoration: none !important;
+        }
+
+    .hidden {
+        visibility: hidden;
+    }
+
+    .alert-box {
+        position: absolute;
+        right: 0;
+        background-color: #02a602;
+        font-size: 20px;
+        top: 70px;
+        padding: 15px 40px 15px 15px;
+        color: #ffffff;
+        min-width: 350px;
+        z-index: 10;
+    }
+
+        .alert-box .close-alert {
+            font-size: 20px;
+            position: absolute;
+            right: 10px;
+            top: 15px;
+            cursor: pointer;
+            z-index: 11;
+        }
+
+        .alert-box.show::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 4px;
+            background-color: #0ed40e;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 11;
+            animation: hideMeter 6s linear;
+        }
+
+    @@keyframes hideMeter {
+        0% {
+            width: 100%;
+        }
+
+        100% {
+            width: 0%;
+        }
+    }
+
+    .alert-box.show {
+        animation: showAlert 1s ease forwards;
+    }
+
+    @@keyframes showAlert {
+        0% {
+            transform: translateX(100%);
+        }
+
+        40% {
+            transform: translateX(-15%);
+        }
+
+        80% {
+            transform: translateX(0%);
+        }
+
+        100% {
+            transform: translateX(-10px);
+        }
+    }
+
+    .alert-box.hide {
+        animation: hideAlert 1s ease forwards;
+    }
+
+    @@keyframes hideAlert {
+        0% {
+            transform: translateX(-10px);
+        }
+
+        40% {
+            transform: translateX(0%);
+        }
+
+        80% {
+            transform: translateX(-15%);
+        }
+
+        100% {
+            transform: translateX(100%);
+        }
+    }
+</style>
+<h2 class="text-center">Literacy is a bridge from misery to hope. —Kofi Annan</h2>
+<div class="gallery">
+    @foreach (var item in Model)
+    {
+
+        <div class="content">
+            <h3>@item.Title</h3>
+            <img src="@item.BookImageUrl" alt="">
+            <p>@item.Description</p>
+            <h6>$@item.Price</h6>
+            @if (item.Quantity > 0)
+            {
+
+                <button>@Html.ActionLink("Buy Now", "Create", "Orders", new { id = item.Id }, null)</button>
+            }
+            else
+            {
+                <button disabled style="-webkit-filter: grayscale(100%);">Out of Stock</button>
+            }
+        </div>
+    }
+</div>
+<div class="alert-box hide hidden">
+    Order has been completed successfully
+    <span class="close-alert">&times;</span>
+</div>
+@section scripts{
+    <script>
+        const alertBox = document.querySelector(".alert-box");
+        const closeBtn = document.querySelector(".close-alert")
+        let timer;
+        if (localStorage.getItem("Purchase") == "true") {
+            showAlertBox();
+            localStorage.setItem("Purchase", "false");
+        }
+        closeBtn.addEventListener("click", function () {
+            hideAlertBox();
+            clearTimeout(timer);
+        })
+
+        function showAlertBox() {
+            alertBox.classList.remove("hide");
+            alertBox.classList.add("show");
+            // hide animation onload
+            if (alertBox.classList.contains("hidden")) {
+                alertBox.classList.remove("hidden");
+            }
+            timer = setTimeout(function () {
+                hideAlertBox();
+            }, 6000)
+        }
+
+        function hideAlertBox() {
+            alertBox.classList.remove("show");
+            alertBox.classList.add("hide");
+        }
+        $(document).on("ready", function () {
+
+            
+            $("#albumsTable").DataTable({
+                ajax: {
+                    url: "/api/Albums1",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "Name",
+                        render: function (settings, type, album) {
+                            return "<a href='/Albums/Details/" + album.Id + "'>" + album.Name + "</a>";
+                        }
+                    },
+                    {
+                        data: "Price"
+                    },
+                    {
+                        data: "AlbumArtUrl",
+                        render: function (settings, type, album) {
+                            return "<img src='" + album.AlbumArtUrl + "'/>";
+                        }
+                    }]
+            });
+        });
+    </script>
+}

@@ -1,0 +1,230 @@
+﻿@model AlbumsMVC.Models.OrderPurchaseDTO
+@{
+    ViewBag.Title = "Create";
+}
+
+
+<style>
+
+    * {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        outline: none;
+        border: none;
+        text-transform: capitalize;
+        transition: all .2s linear;
+    }
+
+    .credit-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 25px;
+        min-height: 93.3vh;
+        background: linear-gradient(90deg, #2ecc71 60%, #27ae60 40.1%);
+    }
+
+        .credit-container form {
+            padding: 20px;
+            width: 700px;
+            background: #fff;
+            box-shadow: 0 5px 10px rgba(0,0,0,.1);
+        }
+
+            .credit-container form .row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+                .credit-container form .row .col {
+                    flex: 1 1 250px;
+                }
+
+                    .credit-container form .row .col .title {
+                        font-size: 20px;
+                        color: #333;
+                        padding-bottom: 5px;
+                        text-transform: uppercase;
+                    }
+
+                    .credit-container form .row .col .inputBox {
+                        margin: -10px 15px;
+                    }
+
+                        .credit-container form .row .col .inputBox span {
+                            margin-bottom: 10px;
+                            display: block;
+                        }
+
+                        .credit-container form .row .col .inputBox input {
+                            width: 100%;
+                            border: 1px solid #ccc;
+                            padding: 10px 15px;
+                            font-size: 15px;
+                            text-transform: none;
+                        }
+
+                            .credit-container form .row .col .inputBox input:focus {
+                                border: 1px solid #000;
+                            }
+
+                    .credit-container form .row .col .flex {
+                        display: flex;
+                        gap: 15px;
+                    }
+
+                        .credit-container form .row .col .flex .inputBox {
+                            margin-top: 5px;
+                        }
+
+                    .credit-container form .row .col .inputBox img {
+                        height: 34px;
+                        margin-top: 5px;
+                        filter: drop-shadow(0 0 1px #000);
+                    }
+
+            .credit-container form .submit-btn {
+                width: 100%;
+                padding: 12px;
+                font-size: 17px;
+                background: #27ae60;
+                color: #fff;
+                margin-top: 5px;
+                cursor: pointer;
+            }
+
+                .credit-container form .submit-btn:hover {
+                    background: #2ecc71;
+                }
+
+    .disabled {
+        pointer-events: none;
+        filter: grayscale(100%);
+    }
+
+    label {
+        text-align: left;
+        padding-left: 15px;
+        display: block;
+    }
+
+    form {
+        border-radius: 10%;
+    }
+
+    .container.body-content {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .body-content {
+        /*padding:0!important;*/
+    }
+
+    body {
+        padding-bottom: 0 !important;
+    }
+ 
+</style>
+<div class="credit-container">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.Order.BookId)
+        @Html.HiddenFor(model => model.Order.DateOfPurchase)
+        @Html.HiddenFor(model => model.Order.UserId)
+        @Html.HiddenFor(model => model.PurchaseData.Email)
+
+        <div class="form-horizontal">
+            <h4 class="text-center">Purchase Details</h4>
+
+            <hr />
+            <div class="row">
+                <div class="col">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PurchaseData.FullName, htmlAttributes: new { @class = " " })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.PurchaseData.FullName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PurchaseData.FullName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PurchaseData.Address, htmlAttributes: new { @class = " " })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.PurchaseData.Address, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PurchaseData.Address, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Order.Book.Title, htmlAttributes: new { @class = "" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Order.Book.Title, new { htmlAttributes = new { @class = "form-control disabled" } })
+                            @Html.ValidationMessageFor(model => model.Order.Book.Title, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Order.Book.Price, htmlAttributes: new { @class = " " })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Order.Book.Price, new { htmlAttributes = new { @class = "form-control disabled" } })
+                            @Html.ValidationMessageFor(model => model.Order.Book.Price, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col" style="padding-top:10px">
+                    <div class="form-group">
+                        <div class="inputBox">
+                            <span>cards accepted :</span>
+                            <img src="~/Images/card_img.png" alt="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PurchaseData.CardNumber, htmlAttributes: new { @class = "" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.PurchaseData.CardNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PurchaseData.CardNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PurchaseData.ExpirationDate, htmlAttributes: new { @class = " " })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.PurchaseData.ExpirationDate, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PurchaseData.ExpirationDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PurchaseData.CVV, htmlAttributes: new { @class = " " })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.PurchaseData.CVV, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PurchaseData.CVV, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <h6>*The book will be delivered to your home address</h6>
+                <div class="text-center">
+                    <input type="submit" value="Complete Purchase" class="btn btn-default submit-btn" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+@section scripts{
+    <script>
+        
+        $('form').submit(function () {
+            localStorage.setItem("Purchase", "true");
+            return true; // return false to cancel form action
+        });
+
+    </script>
+
+}
+
